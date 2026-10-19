@@ -1,0 +1,974 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>빅발리볼 심판법</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one slide at a time. Signal slides pair an animated referee figure (left) with a step-by-step signal list (right). Court blue for structure, whistle orange for the hands and the current step. */
+:root {
+  --bg: #EEF2F4;
+  --surface: #FFFFFF;
+  --soft: #E1E8EC;
+  --ink: #0F1C28;
+  --muted: #566874;
+  --line: #CCD6DB;
+  --accent: #D9480F;
+  --accent-ink: #FFFFFF;
+  --court: #1B5E7B;
+  --yellow: #F5C400;
+  --red: #D0312D;
+  --good: #2E8B57;
+  --f-display: "Black Han Sans", "Noto Sans KR", sans-serif;
+  --f-body: "Noto Sans KR", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B141C; --surface: #13212C; --soft: #1B2C38; --ink: #E9EFF3; --muted: #9AAAB5;
+    --line: #2A3B47; --accent: #FF7A3D; --accent-ink: #0B141C; --court: #66B6D6; --good: #4CBF86;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B141C; --surface: #13212C; --soft: #1B2C38; --ink: #E9EFF3; --muted: #9AAAB5;
+  --line: #2A3B47; --accent: #FF7A3D; --accent-ink: #0B141C; --court: #66B6D6; --good: #4CBF86;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#app { height: 100%; display: flex; flex-direction: column; max-width: 1160px; margin: 0 auto; }
+.bar { height: 4px; background: var(--line); flex: none; margin-top: 8px; border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s ease; }
+#stage { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-block: 20px 16px; }
+.slide { display: none; }
+.slide.on { display: block; animation: rise .35s ease both; }
+@keyframes rise { from { opacity: .001; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .slide.on { animation: none; } .bar i { transition: none; } }
+
+.kicker { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--court); margin: 0 0 6px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; text-wrap: balance; line-height: 1.2; }
+h2 { font-size: clamp(26px, 4.2vw, 44px); margin-bottom: 8px; }
+h3 { font-size: 20px; }
+p { margin: 0; }
+.lead { font-size: clamp(16px, 2vw, 19px); color: var(--muted); max-width: 62ch; margin-bottom: 18px; }
+.note { font-size: 14px; color: var(--muted); margin-top: 14px; max-width: 74ch; }
+b, strong { font-weight: 700; }
+
+.hero { padding-block: 3vh 0; }
+.hero h1 { font-size: clamp(54px, 12vw, 140px); line-height: 1.02; letter-spacing: -0.01em; margin: 10px 0 14px; }
+.hero h1 span { color: var(--accent); }
+.hero .sub { font-size: clamp(18px, 2.4vw, 26px); max-width: 30ch; }
+.net { margin-top: 32px; height: 64px; border-top: 6px solid var(--ink); border-radius: 2px;
+  background:
+    repeating-linear-gradient(90deg, var(--line) 0 2px, transparent 2px 22px),
+    repeating-linear-gradient(0deg, var(--line) 0 2px, transparent 2px 22px); }
+.hint { font-family: var(--f-mono); font-size: 12px; color: var(--muted); margin-top: 14px; }
+
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; min-width: 0; }
+.panel h3 { margin-bottom: 6px; font-size: 18px; }
+.panel p, .panel li { color: var(--muted); font-size: 15px; }
+.panel ul { margin: 6px 0 0; padding-left: 18px; }
+.panel.strong { border-color: var(--accent); }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: 12px; padding: 2px 8px; border-radius: 4px; background: var(--soft); color: var(--ink); margin-bottom: 8px; }
+.facts { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); margin-bottom: 14px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.fact .k { font-family: var(--f-mono); font-size: 11px; color: var(--court); letter-spacing: .06em; }
+.fact .v { font-family: var(--f-display); font-size: 22px; line-height: 1.25; }
+.fact .s { font-size: 13px; color: var(--muted); }
+.cols { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 760px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+.dia { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px; overflow-x: auto; }
+.dia svg { display: block; width: 100%; min-width: 420px; height: auto; }
+.dia text { font-family: var(--f-body); font-size: 13px; fill: var(--ink); }
+.dia .c-line { stroke: var(--ink); fill: none; stroke-width: 2; }
+.dia .c-floor { fill: var(--soft); stroke: var(--ink); stroke-width: 2; }
+.dia .dot { fill: var(--accent); }
+.dia .dot2 { fill: var(--court); }
+.dia .dot3 { fill: var(--muted); }
+.legend { display: grid; gap: 10px; }
+.legend div { display: grid; grid-template-columns: 16px 1fr; gap: 10px; align-items: start; }
+.legend i { width: 14px; height: 14px; border-radius: 50%; margin-top: 5px; }
+.legend p { color: var(--muted); font-size: 14px; }
+.legend strong { display: block; color: var(--ink); }
+
+.tbl { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: 15px; }
+.tbl th, .tbl td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl th { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; color: var(--court); background: var(--soft); }
+.tbl td:first-child { font-weight: 700; white-space: nowrap; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl-wrap { overflow-x: auto; }
+
+.beats { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; margin-bottom: 14px; }
+.beat { flex: 1 1 150px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.beat .n { font-family: var(--f-display); font-size: 34px; color: var(--accent); line-height: 1; }
+.beat h3 { margin: 4px 0 2px; font-size: 18px; }
+.beat p { color: var(--muted); font-size: 14px; }
+.arrow { align-self: center; font-family: var(--f-mono); color: var(--muted); }
+@media (max-width: 700px) { .arrow { display: none; } }
+.tips { margin: 0; padding-left: 20px; }
+.tips li { margin: 5px 0; font-size: 15px; }
+
+/* referee figure + lab */
+.lab { display: grid; gap: 18px; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); align-items: start; }
+@media (max-width: 800px) { .lab { grid-template-columns: minmax(0, 1fr); } }
+.player { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-width: 0; }
+.player svg { display: block; width: 100%; max-width: 340px; margin: 0 auto; height: auto; }
+.fig .floor { stroke: var(--line); stroke-width: 3; }
+.fig .skin { fill: var(--surface); stroke: var(--ink); stroke-width: 3; }
+.fig .torso { fill: var(--court); }
+.fig .leg { stroke: var(--ink); stroke-width: 11; stroke-linecap: round; }
+.fig .arm { stroke: var(--ink); stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.fig .hl { stroke: var(--accent); fill: none; stroke-linecap: round; }
+.fig .hf { fill: var(--accent); }
+.fig .hrest { fill: var(--muted); }
+.fig .cy { fill: var(--yellow); stroke: rgba(0,0,0,.45); stroke-width: 1; }
+.fig .cr { fill: var(--red); stroke: rgba(0,0,0,.45); stroke-width: 1; }
+.fig .netband { fill: var(--soft); stroke: var(--ink); stroke-width: 2; }
+.fig .whist text { fill: var(--accent); font-family: var(--f-display); font-size: 20px; }
+.fig .whist path { stroke: var(--accent); fill: none; stroke-width: 3; stroke-linecap: round; }
+.fig .cue { fill: var(--accent); font-family: var(--f-body); font-weight: 700; font-size: 13px; }
+.cap { text-align: center; font-family: var(--f-display); font-size: 20px; min-height: 30px; margin-top: 4px; color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 6px 0; min-height: 26px; }
+.chips span { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--soft); color: var(--muted); }
+.chips span.on { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 4px; }
+.sm { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; cursor: pointer; }
+.sm:hover { border-color: var(--accent); }
+.sm[aria-pressed="true"] { border-color: var(--accent); background: var(--soft); font-weight: 700; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.tabs button { font: inherit; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.tabs button:hover { border-color: var(--accent); }
+.tabs button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.detail { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 20px; }
+.detail .en { font-family: var(--f-mono); font-size: 12px; color: var(--court); }
+.detail ol { margin: 10px 0; padding-left: 22px; }
+.detail li { margin: 5px 0; }
+.detail .row { font-size: 14px; color: var(--muted); margin-top: 8px; }
+.detail .row b { color: var(--ink); }
+.detail .tip { border-left: 3px solid var(--accent); padding-left: 10px; }
+
+/* flags */
+.flags { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 14px; }
+.flag { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.flag svg { width: 84px; height: 84px; display: block; margin-bottom: 8px; }
+.flag svg .pole { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; fill: none; }
+.flag svg .cloth { fill: var(--accent); }
+.flag svg .hand { fill: var(--muted); }
+
+/* activities */
+.sit { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: start; }
+@media (max-width: 800px) { .sit { grid-template-columns: minmax(0, 1fr); } }
+.opts { display: grid; gap: 8px; }
+.sitlist { max-height: 460px; overflow-y: auto; padding-right: 4px; }
+.opt { font: inherit; text-align: left; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; cursor: pointer; }
+.opt:hover { border-color: var(--court); }
+.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 4px 0 0 var(--accent); }
+.opt.ok { border-color: var(--good); box-shadow: inset 4px 0 0 var(--good); }
+.opt.bad { border-color: var(--red); box-shadow: inset 4px 0 0 var(--red); }
+.opt:disabled { cursor: default; opacity: .92; }
+.sittitle { font-family: var(--f-display); font-size: clamp(20px, 2.6vw, 26px); margin-bottom: 8px; text-wrap: balance; }
+.answer { margin-top: 10px; font-size: 15px; }
+.answer .call { font-family: var(--f-display); font-size: 22px; color: var(--accent); }
+.answer ol { margin: 6px 0 0; padding-left: 20px; color: var(--muted); }
+.veilmsg { display: none; background: var(--surface); border: 2px dashed var(--line); border-radius: 10px; padding: 24px 18px; text-align: center; color: var(--muted); }
+.veiled .player, .veiled .answer { display: none; }
+.veiled .veilmsg { display: block; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+.q-count { font-family: var(--f-mono); font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.q-text { font-family: var(--f-display); font-size: clamp(20px, 2.8vw, 28px); margin-bottom: 12px; text-wrap: balance; }
+.fb { margin-top: 12px; padding: 12px 14px; border-radius: 8px; background: var(--soft); font-size: 15px; min-height: 48px; }
+.btn { font: inherit; font-weight: 700; background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn[disabled] { opacity: .4; cursor: default; }
+.score { font-family: var(--f-display); font-size: 56px; color: var(--accent); }
+.quizgrid { display: grid; gap: 16px; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); align-items: start; }
+@media (max-width: 800px) { .quizgrid { grid-template-columns: minmax(0, 1fr); } }
+.check { display: grid; gap: 8px; margin-bottom: 14px; }
+.check label { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; cursor: pointer; }
+.check input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--accent); }
+.draw { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; }
+.drawn { font-family: var(--f-display); font-size: 26px; color: var(--accent); min-width: 8ch; }
+.sum { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 14px; }
+.src { font-size: 13px; color: var(--muted); }
+.src a { color: var(--court); }
+
+.nav { flex: none; display: flex; align-items: center; gap: 10px; padding-block: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
+.nav .grow { flex: 1; }
+.nav button { font: inherit; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px; cursor: pointer; min-height: 38px; }
+.nav button { white-space: nowrap; }
+@media (max-width: 480px) { .nav { gap: 6px; } .nav button { padding: 6px 10px; } .pg { min-width: 52px; } .sitlist { max-height: 200px; } }
+.nav button:hover:not([disabled]) { border-color: var(--accent); }
+.nav button[disabled] { opacity: .35; cursor: default; }
+.pg { font-family: var(--f-mono); font-size: 13px; color: var(--muted); min-width: 64px; text-align: center; }
+.keys { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+@media (max-width: 640px) { .keys { display: none; } }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid var(--court); outline-offset: 2px; }
+</style>
+
+<div id="app">
+  <div class="bar" aria-hidden="true"><i id="prog"></i></div>
+  <main id="stage" tabindex="-1">
+
+    <!-- 1 표지 -->
+    <section class="slide hero">
+      <p class="kicker">체육 · 뉴스포츠 · 수행평가</p>
+      <h1>빅발리볼<br><span>심판법</span></h1>
+      <p class="sub">휘슬, 수신호, 득점 팀 가리키기까지 동작으로 익히기</p>
+      <div class="net" aria-hidden="true"></div>
+      <p class="hint">→ 키나 아래 버튼으로 넘긴다 · 신호 장에서는 그림이 직접 동작을 보여 준다</p>
+    </section>
+
+    <!-- 2 평가 안내 -->
+    <section class="slide">
+      <p class="kicker">수행평가 안내</p>
+      <h2>심판법 수행평가에서 보는 것</h2>
+      <p class="lead">상황을 보고 알맞은 신호를 고르고, 정확한 동작으로 보여 주는 것이 핵심이다. 아래 표는 연습용 예시이다.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>평가 요소</th><th>이렇게 한다</th></tr></thead>
+          <tbody>
+            <tr><td>순서</td><td>휘슬을 불고, 반칙 신호를 보인 뒤, 득점 팀 쪽을 가리킨다.</td></tr>
+            <tr><td>판정</td><td>상황에 맞는 신호를 바로 고른다.</td></tr>
+            <tr><td>동작</td><td>손가락 수, 손바닥 방향, 팔 위치를 정확하게 만든다.</td></tr>
+            <tr><td>크기와 멈춤</td><td>팔을 크고 곧게 뻗고, 신호마다 잠깐 멈춰 모두가 볼 수 있게 한다.</td></tr>
+            <tr><td>방향</td><td>득점 팀 쪽에 있는 팔로 그 팀을 가리킨다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">실제 평가 기준과 배점은 선생님의 안내가 우선이다. 이 자료는 연습을 돕는 용도이다.</p>
+    </section>
+
+    <!-- 3 규칙 -->
+    <section class="slide">
+      <p class="kicker">1 · 빅발리볼 알아보기</p>
+      <h2>심판이 알아야 할 빅발리볼 규칙</h2>
+      <div class="facts">
+        <div class="fact"><div class="k">공</div><div class="v">지름 50cm</div><div class="s">무게 200g, 일반 배구공의 두 배 크기</div></div>
+        <div class="fact"><div class="k">네트</div><div class="v">높이 1.55m</div><div class="s">배드민턴 코트를 쓸 수 있다</div></div>
+        <div class="fact"><div class="k">팀</div><div class="v">6명</div><div class="s">교체 포함 최대 12명</div></div>
+        <div class="fact"><div class="k">타임아웃</div><div class="v">세트당 1회</div><div class="s">교체된 선수는 다시 못 나온다</div></div>
+      </div>
+      <div class="grid">
+        <div class="panel"><h3>득점</h3><ul><li>공이 상대 코트 바닥에 닿을 때</li><li>상대 팀이 반칙을 할 때</li><li>상대 팀이 벌칙을 받을 때</li></ul></div>
+        <div class="panel"><h3>서브와 리시브</h3><ul><li>서브는 아래에서 위로(언더핸드) 친다.</li><li>서브로 넘어온 첫 공을 위에서(오버핸드) 바로 넘기면 반칙이다.</li><li>상대 코트로 넘기기까지 5번 이내로 친다.</li></ul></div>
+        <div class="panel"><h3>자주 나오는 반칙</h3><ul><li>플레이 중 몸이 네트에 닿는다.</li><li>상대 공이 넘어오기 전에 네트 위로 손을 넘겨 공을 건드린다.</li></ul></div>
+      </div>
+      <p class="note">자료마다 세부 규칙이 조금 다르다. 우리 반에서 정한 규칙이 있으면 그것이 먼저이다. 아래 신호는 공식 배구의 수신호를 빅발리볼 판정에 맞게 쓴 것이다.</p>
+    </section>
+
+    <!-- 4 심판진 -->
+    <section class="slide">
+      <p class="kicker">2 · 심판진</p>
+      <h2>누가 어디에서 판정하나</h2>
+      <p class="lead">수업에서는 인원에 맞게 한 사람이 역할을 함께 맡기도 한다.</p>
+      <div class="cols">
+        <div class="dia">
+          <svg viewBox="0 0 600 340" role="img" aria-label="코트를 위에서 본 그림. 네트 양쪽 끝에 주심과 부심, 모서리에 선심, 부심 쪽에 기록원 위치.">
+            <rect class="c-floor" x="100" y="70" width="400" height="200"/>
+            <line class="c-line" x1="300" y1="52" x2="300" y2="288" stroke-width="4"/>
+            <text x="318" y="170">네트</text>
+            <circle class="dot" cx="300" cy="34" r="12"/><text x="320" y="38">주심</text>
+            <circle class="dot2" cx="300" cy="306" r="11"/><text x="204" y="326">부심</text>
+            <rect x="336" y="298" width="96" height="26" rx="4" class="c-floor"/><text x="350" y="316">기록원 석</text>
+            <circle class="dot3" cx="74" cy="46" r="9"/><circle class="dot3" cx="526" cy="46" r="9"/>
+            <circle class="dot3" cx="74" cy="294" r="9"/><circle class="dot3" cx="526" cy="294" r="9"/>
+            <text x="30" y="26">선심</text><text x="520" y="26">선심</text>
+            <text x="30" y="322">선심</text><text x="520" y="322">선심</text>
+          </svg>
+        </div>
+        <div class="legend">
+          <div><i style="background:var(--accent)"></i><p><strong>주심</strong>경기 전체를 책임지고 휘슬과 신호로 판정한다.</p></div>
+          <div><i style="background:var(--court)"></i><p><strong>부심</strong>주심을 돕고 교체, 타임아웃, 서브 순서를 챙긴다.</p></div>
+          <div><i style="background:var(--muted)"></i><p><strong>선심</strong>선 안팎을 보고 깃발로 알린다.</p></div>
+          <div><i style="background:var(--line);border:1px solid var(--muted)"></i><p><strong>기록원</strong>점수와 서브 순서를 기록한다.</p></div>
+        </div>
+      </div>
+      <p class="note">이 그림은 위치를 이해하기 위한 단순한 배치도이다. 이 자료의 신호 연습은 주심이 하는 동작을 중심으로 한다.</p>
+    </section>
+
+    <!-- 5 세 박자 -->
+    <section class="slide" data-demo="out">
+      <p class="kicker">3 · 신호의 기본</p>
+      <h2>휘슬, 반칙 신호, 득점 팀 가리키기</h2>
+      <div class="beats">
+        <div class="beat"><div class="n">1</div><h3>휘슬</h3><p>짧고 분명하게 불어 랠리를 멈춘다.</p></div>
+        <span class="arrow">&rarr;</span>
+        <div class="beat"><div class="n">2</div><h3>반칙 신호</h3><p>무엇이 일어났는지 보여 준다.</p></div>
+        <span class="arrow">&rarr;</span>
+        <div class="beat"><div class="n">3</div><h3>득점 팀</h3><p>서브권을 얻는 팀 쪽으로 팔을 뻗는다.</p></div>
+      </div>
+      <div class="lab" id="demo-lab">
+        <div class="demo-left"></div>
+        <div class="panel"><h3>동작 요령</h3>
+          <ol class="tips">
+            <li>휘슬 뒤에 신호를 시작한다. 신호가 먼저 나가지 않는다.</li>
+            <li>팔은 크고 곧게, 손가락 수와 손바닥 방향을 분명하게 만든다.</li>
+            <li>신호마다 잠깐 멈춰 선수와 기록원이 볼 시간을 준다.</li>
+            <li>득점 팀 쪽에 있는 팔로 그 팀을 가리킨다.</li>
+            <li>그림 아래의 [좌우 바꾸기]로 반대쪽 팀 방향도 연습한다.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 시작 득점 선 -->
+    <section class="slide" data-labsigs="serve,point,in,out,touched">
+      <p class="kicker">4 · 수신호 ① 시작, 득점, 공의 위치</p>
+      <h2>서브 허가부터 인·아웃까지</h2>
+      <div class="lab"></div>
+    </section>
+
+    <!-- 7 공 접촉 -->
+    <section class="slide" data-labsigs="catch,double,overtouch">
+      <p class="kicker">4 · 수신호 ② 공을 친 방법</p>
+      <h2>캐치, 더블 컨택, 터치 횟수</h2>
+      <div class="lab"></div>
+      <p class="note">빅발리볼에서 서브받은 첫 공을 오버핸드로 바로 넘기는 반칙은 공식 수신호가 따로 없다. 수업에서 정한 신호가 있는지 선생님께 확인하고, 없으면 득점 팀 가리키기로 알리고 이유를 말로 설명한다.</p>
+    </section>
+
+    <!-- 8 네트와 위치 -->
+    <section class="slide" data-labsigs="net,over,rot,block,dfault">
+      <p class="kicker">4 · 수신호 ③ 네트와 순서</p>
+      <h2>네트 반칙과 서브 순서</h2>
+      <div class="lab"></div>
+    </section>
+
+    <!-- 9 운영 -->
+    <section class="slide" data-labsigs="timeout,sub,endset,change">
+      <p class="kicker">4 · 수신호 ④ 경기 운영</p>
+      <h2>타임아웃, 교체, 세트 종료</h2>
+      <div class="lab"></div>
+    </section>
+
+    <!-- 10 카드 -->
+    <section class="slide" data-labsigs="yellow,red,expel,disq">
+      <p class="kicker">4 · 수신호 ⑤ 카드</p>
+      <h2>태도 반칙은 카드로 알린다</h2>
+      <div class="lab"></div>
+      <p class="note">카드는 공식 배구의 방식이다. 수업에서는 말로 주의를 주고 카드를 쓰지 않을 수도 있으니 선생님 안내를 확인한다.</p>
+    </section>
+
+    <!-- 11 선심 -->
+    <section class="slide">
+      <p class="kicker">5 · 선심</p>
+      <h2>선심은 깃발로 알린다</h2>
+      <p class="lead">선심이 있는 경기라면 선 근처 판정은 깃발로 먼저 알려 준다.</p>
+      <div class="flags">
+        <div class="flag">
+          <svg viewBox="0 0 84 84" aria-hidden="true"><path class="pole" d="M42 8 L42 54"/><path class="cloth" d="M42 54 L30 76 L54 76 Z"/><circle class="hand" cx="42" cy="6" r="4"/></svg>
+          <h3>인</h3><p>깃발을 아래로 향한다.</p>
+        </div>
+        <div class="flag">
+          <svg viewBox="0 0 84 84" aria-hidden="true"><path class="pole" d="M42 76 L42 30"/><path class="cloth" d="M42 30 L30 8 L54 8 Z"/><circle class="hand" cx="42" cy="78" r="4"/></svg>
+          <h3>아웃</h3><p>깃발을 위로 세운다.</p>
+        </div>
+        <div class="flag">
+          <svg viewBox="0 0 84 84" aria-hidden="true"><path class="pole" d="M30 76 L30 30"/><path class="cloth" d="M30 30 L20 10 L40 10 Z"/><circle class="hand" cx="62" cy="14" r="6"/></svg>
+          <h3>터치</h3><p>깃발을 세우고 반대 손으로 깃발 윗부분을 만진다. 공이 선수에 닿고 나갔다는 뜻이다.</p>
+        </div>
+      </div>
+      <p class="note">깃발이 없는 수업에서는 주심이 인·아웃 신호를 직접 한다.</p>
+    </section>
+
+    <!-- 12 상황 연습 -->
+    <section class="slide" id="sitslide">
+      <p class="kicker">활동 ① 상황 연습</p>
+      <h2>상황을 보고 신호를 해 보자</h2>
+      <div class="toolbar">
+        <button class="sm" id="sit-hide" type="button" aria-pressed="false">정답 가리고 먼저 해 보기</button>
+        <button class="sm" id="sit-rand" type="button">무작위 상황</button>
+      </div>
+      <div class="sit">
+        <div class="opts sitlist" id="sit-list"></div>
+        <div id="sit-stage">
+          <div class="sittitle" id="sit-title"></div>
+          <div class="veilmsg" id="sit-veil"><p>먼저 직접 동작을 해 보자. 휘슬, 신호, 득점 팀 가리키기 순서이다.</p><p style="margin-top:10px"><button class="btn" id="sit-reveal" type="button">정답 보기</button></p></div>
+          <div class="player" id="sit-player"></div>
+          <div class="answer" id="sit-answer"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 퀴즈 -->
+    <section class="slide" id="quizslide">
+      <p class="kicker">활동 ② 동작 보고 맞히기</p>
+      <div id="quiz-body"></div>
+    </section>
+
+    <!-- 14 자기 점검 -->
+    <section class="slide">
+      <p class="kicker">활동 ③ 평가 전 점검</p>
+      <h2>수행평가 전에 확인하자</h2>
+      <div class="check" id="check"></div>
+      <p class="lead" id="check-sum">0 / 6 확인했다.</p>
+      <div class="panel">
+        <h3>짝과 연습</h3>
+        <p>한 명이 신호를 뽑고, 다른 한 명은 보지 않은 채 상황 설명만 듣고 동작해 본다.</p>
+        <div class="draw">
+          <button class="btn" id="draw-btn" type="button">신호 뽑기</button>
+          <span class="drawn" id="drawn">?</span>
+          <button class="sm" id="draw-show" type="button" disabled>동작 순서 보기</button>
+        </div>
+        <ol class="tips" id="draw-steps" style="margin-top:10px"></ol>
+      </div>
+    </section>
+
+    <!-- 15 정리 -->
+    <section class="slide">
+      <p class="kicker">정리</p>
+      <h2>오늘의 정리</h2>
+      <div class="sum">
+        <div class="panel"><h3>순서</h3><p>휘슬, 반칙 신호, 득점 팀 가리키기 순서로 한다.</p></div>
+        <div class="panel"><h3>손가락 신호</h3><p>더블 컨택은 2개, 터치 횟수 초과는 4개이다.</p></div>
+        <div class="panel"><h3>선 판정</h3><p>인은 바닥을 가리키고, 아웃은 두 팔뚝을 세운다.</p></div>
+        <div class="panel"><h3>운영 신호</h3><p>타임아웃은 T자, 교체는 두 팔뚝 돌리기, 세트 종료는 팔뚝 교차이다.</p></div>
+      </div>
+      <p class="src">참고: <a href="https://inside.cev.eu/sports/volleyball/referee-signals/" target="_blank" rel="noopener">CEV 심판 수신호</a> · <a href="https://www.fivb.com/volleyball/the-game/official-volleyball-rules/" target="_blank" rel="noopener">FIVB 공식 배구 규칙 2025–2028</a> · <a href="https://brunch.co.kr/@pungteacher/34" target="_blank" rel="noopener">빅발리볼 경기를 위한 준비</a> · <a href="https://volleyball-fun.com/big-volleyball-tips/" target="_blank" rel="noopener">빅발리볼 잘하는법</a></p>
+    </section>
+
+  </main>
+  <nav class="nav" aria-label="슬라이드 이동">
+    <button id="prev" type="button">&larr; 이전</button>
+    <span class="pg" id="pg">1 / 15</span>
+    <button id="next" type="button">다음 &rarr;</button>
+    <span class="grow"></span>
+    <span class="keys">← → 이동 · F 전체 화면 · 숫자+Enter 점프</span>
+    <button id="fs" type="button" aria-label="전체 화면">전체 화면</button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  var REDUCED = false;
+  try { REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  /* ---------- pose data ---------- */
+  var SH = { L: [126, 80], R: [174, 80] };
+  var REST = { L: [120, 122, 116, 164], R: [180, 122, 184, 164] };
+  function m(a) { return [300 - a[0], a[1], 300 - a[2], a[3]]; }
+  function mp(p) { return { L: m(p.R), R: m(p.L) }; }
+  function P(l, r) { return { L: l || REST.L, R: r || REST.R }; }
+  var A = {
+    chest: [184, 112, 168, 86],
+    side: [218, 80, 262, 80],
+    inDown: [200, 118, 222, 152],
+    up: [214, 86, 216, 44],
+    fingers: [204, 104, 206, 62],
+    straightUp: [186, 44, 192, 6]
+  };
+  function circle(n, f) { var k = []; for (var i = 0; i <= n; i++) { k.push(f(2 * Math.PI * i / n)); } return k; }
+
+  var WHISTLE = { label: '휘슬', dur: 1000, keys: [P()], whistle: true, hands: {} };
+  var POINTSEG = { label: '득점 팀 쪽으로 팔 뻗기', dur: 1500, keys: [P(null, A.side)], hands: { R: 'open' }, cue: '득점 팀' };
+  var RESTSEG = { label: null, dur: 900, keys: [P()], hands: {} };
+  var LV = [122, 124, 134, 84];
+
+  var SIG = {
+    serve: { n: '서브 허가', en: 'Authorization to serve', flow: 'ws',
+      segs: [{ label: '서브 방향 가리키기', dur: 1700, keys: [P(null, A.chest), P(null, [218, 92, 262, 88])], hands: { R: 'open' }, cue: '서브 팀' }],
+      steps: ['휘슬을 분다.', '서브할 팀 쪽에 있는 손을 가슴 앞에서 시작한다.', '그 손을 서브 팀 방향으로 쓸어 보내 팔을 옆으로 편다.'],
+      when: '양 팀이 준비되고 서버가 공을 가졌을 때, 매 랠리를 시작할 때.', tip: '휘슬이 먼저이고 손은 그다음이다.' },
+    point: { n: '득점 (서브권)', en: 'Point awarded', flow: 'x',
+      segs: [POINTSEG],
+      steps: ['반칙 신호를 먼저 보인다.', '득점한 팀(다음에 서브할 팀) 쪽 팔을 어깨 높이로 곧게 옆으로 뻗는다.', '손바닥은 위로 향하게 하고 잠깐 멈춘다.'],
+      when: '랠리가 끝나고 어느 팀이 득점했는지 알릴 때.', tip: '반칙 신호보다 먼저 팔을 뻗지 않는다.' },
+    'in': { n: '인', en: 'Ball in', flow: 'fault',
+      segs: [{ label: '바닥 가리키기', dur: 1500, keys: [P(null, A.inDown)], hands: { R: 'point' } }],
+      steps: ['휘슬을 분다.', '공이 떨어진 코트 바닥 쪽으로 팔과 손가락을 쭉 뻗는다.', '손가락 끝이 바닥을 향하게 잠깐 멈춘 뒤, 득점 팀을 가리킨다.'],
+      when: '공이 코트 안이나 선에 닿아 떨어졌을 때.', tip: '고개를 돌려 공이 떨어진 자리를 보고 가리킨다.' },
+    out: { n: '아웃', en: 'Ball out', flow: 'fault',
+      segs: [{ label: '두 팔뚝 세우기', dur: 1500, keys: [P(m(A.up), A.up)], hands: { L: 'open', R: 'open' } }],
+      steps: ['휘슬을 분다.', '두 팔을 옆으로 들고 팔꿈치를 굽혀 두 팔뚝을 수직으로 세운다.', '손바닥은 얼굴(몸) 쪽을 향하게 펴고 잠깐 멈춘 뒤, 득점 팀을 가리킨다.'],
+      when: '공이 코트 밖 바닥이나 코트 밖의 물건에 닿았을 때.', tip: '팔뚝이 기울지 않게 곧게 세운다.' },
+    touched: { n: '볼 터치', en: 'Ball touched', flow: 'fault',
+      segs: [{ label: '손바닥으로 쓸기', dur: 2300, keys: [P(LV, [176, 128, 148, 112]), P(LV, [176, 128, 142, 86]), P(LV, [176, 128, 148, 112]), P(LV, [176, 128, 142, 86])], hands: { L: 'open', R: 'open' }, move: 1 }],
+      steps: ['휘슬을 분다.', '한 손을 세워 가슴 앞에 둔다.', '반대 손을 펴서 세운 손 위를 한 번 쓸고 지나간다. 쓸어 주는 방향은 선생님 시범을 따른다.'],
+      when: '공이 선수에게 닿았다는 것을 알릴 때(주로 닿고 나간 공).', tip: '쓸어 주는 동작을 작게 하지 않고 분명하게 한다.' },
+    catch: { n: '캐치 (홀딩)', en: 'Catch', flow: 'fault',
+      segs: [{ label: '팔뚝 천천히 올리기', dur: 2000, keys: [P(null, [190, 112, 232, 116]), P(null, [190, 112, 214, 72])], hands: { R: 'open' } }],
+      steps: ['휘슬을 분다.', '한 팔을 옆으로 뻗어 손바닥을 위로 향한다.', '팔뚝을 위로 천천히 들어 올리고 잠깐 멈춘 뒤, 득점 팀을 가리킨다.'],
+      when: '공을 잡았거나 손에 머물렀다가 던지듯 밀어냈을 때.', tip: '빠르게 올리지 않고 천천히 올린다.' },
+    double: { n: '더블 컨택', en: 'Double contact', flow: 'fault',
+      segs: [{ label: '손가락 2개', dur: 1600, keys: [P(null, A.fingers)], hands: { R: 2 } }],
+      steps: ['휘슬을 분다.', '한 팔을 구부려 손을 어깨 옆 높이로 든다.', '검지와 중지를 벌려 2를 만들고 잠깐 멈춘 뒤, 득점 팀을 가리킨다.'],
+      when: '한 선수가 연속으로 두 번 공을 쳤을 때.', tip: '나머지 손가락은 접어 숫자가 헷갈리지 않게 한다.' },
+    overtouch: { n: '터치 횟수 초과', en: 'Four hits', flow: 'fault',
+      segs: [{ label: '손가락 4개', dur: 1600, keys: [P(null, A.fingers)], hands: { R: 4 } }],
+      steps: ['휘슬을 분다.', '한 팔을 구부려 손을 어깨 옆 높이로 든다.', '손가락을 4개 벌려 보인다. 공식 배구는 4번째 터치가 반칙이라 손가락 4개이다.'],
+      when: '한 팀이 허용된 터치 횟수를 넘겼을 때. 빅발리볼은 5번 이내(자료 기준)이다.', tip: '수업에서 터치 횟수나 신호를 다르게 정했다면 선생님이 정한 방식을 따른다.' },
+    net: { n: '네트 터치', en: 'Net touched', flow: 'fault',
+      segs: [{ label: '네트 짚기', dur: 1500, keys: [P(null, [200, 106, 234, 114])], hands: { R: 'open' }, net: 112 }],
+      steps: ['휘슬을 분다.', '반칙한 팀 쪽에 있는 팔을 든다.', '손으로 네트의 그쪽 부분을 가볍게 짚고 잠깐 멈춘 뒤, 득점 팀을 가리킨다.'],
+      when: '플레이 중 선수의 몸이나 옷이 네트에 닿았을 때.', tip: '어느 팀의 반칙인지 손의 위치로 분명히 보여 준다.' },
+    over: { n: '오버 네트', en: 'Reaching beyond the net', flow: 'fault',
+      segs: [{ label: '네트 위에 손 얹기', dur: 1500, keys: [P(null, [210, 112, 180, 104])], hands: { R: 'open' }, net: 120 }],
+      steps: ['휘슬을 분다.', '한 손을 펴서 손바닥이 아래로 향하게 한다.', '그 손을 네트 위에 평평하게 올리고 잠깐 멈춘 뒤, 득점 팀을 가리킨다.'],
+      when: '상대 공이 넘어오기 전에 네트 위로 손을 넘겨 공이나 상대를 건드렸을 때.', tip: '손바닥이 위가 아니라 아래를 향해야 한다.' },
+    rot: { n: '서브 순서 반칙', en: 'Service order fault', flow: 'fault',
+      segs: [{ label: '검지로 원 그리기', dur: 2200, keys: circle(8, function (a) { return P(null, [204, 104, 206 + 10 * Math.cos(a), 62 + 10 * Math.sin(a)]); }), hands: { R: 'point' }, move: 1, ease: 'linear' }],
+      steps: ['휘슬을 분다.', '한 손의 검지만 펴서 어깨 위로 든다.', '검지로 작은 원을 두세 번 그리고, 득점 팀을 가리킨다.'],
+      when: '서브 순서나 로테이션이 틀렸을 때.', tip: '원은 손목으로 크게 돌리지 않고 검지 끝으로 작게 그린다.' },
+    block: { n: '블로킹 반칙', en: 'Blocking fault', flow: 'fault',
+      segs: [{ label: '두 팔 위로', dur: 1500, keys: [P(m(A.straightUp), A.straightUp)], hands: { L: 'open', R: 'open' } }],
+      steps: ['휘슬을 분다.', '두 팔을 머리 위로 곧게 든다.', '손바닥이 앞을 향하게 펴 보이고, 득점 팀을 가리킨다.'],
+      when: '블로킹을 허용하는 수업 규칙에서 블로킹 반칙이 났을 때.', tip: '수업에서 블로킹을 쓰지 않으면 건너뛴다.' },
+    dfault: { n: '더블 폴트 (재경기)', en: 'Double fault and replay', flow: 'ws',
+      segs: [{ label: '두 엄지 세우기', dur: 1600, keys: [P([112, 116, 122, 84], [188, 116, 178, 84])], hands: { L: 'thumb', R: 'thumb' } }],
+      steps: ['휘슬을 분다.', '두 팔뚝을 세워 가슴 높이로 든다.', '두 엄지를 위로 세우고 잠깐 멈춘다. 그 랠리는 다시 한다.'],
+      when: '양 팀이 동시에 반칙했을 때.', tip: '득점 팀을 가리키지 않는다.' },
+    timeout: { n: '타임아웃', en: 'Time-out', flow: 'ws',
+      segs: [{ label: 'T자 만들기', dur: 1500, keys: [P([110, 100, 136, 94], [166, 124, 150, 108])], hands: { L: 'open', R: 'open' } },
+             { label: '요청한 팀 가리키기', dur: 1400, keys: [P(null, A.side)], hands: { R: 'open' }, cue: '요청한 팀' }],
+      steps: ['휘슬을 분다.', '한 손은 가로로, 다른 손은 세로로 세워 T자를 만든다.', 'T자를 만든 뒤 요청한 팀 쪽을 가리킨다.'],
+      when: '공이 멈춘 상태에서 팀이 타임아웃을 요청했을 때. 빅발리볼은 세트당 1회(자료 기준)이다.', tip: '요청한 팀의 서브권이나 점수와 헷갈리지 않게 팀만 가리킨다.' },
+    sub: { n: '선수 교체', en: 'Substitution', flow: 'ws',
+      segs: [{ label: '두 팔뚝 돌리기', dur: 2400, keys: circle(8, function (a) { var cx = 150, cy = 104, r = 16; return P([110, 116, cx + r * Math.cos(a), cy + r * Math.sin(a)], [190, 116, cx - r * Math.cos(a), cy - r * Math.sin(a)]); }), hands: { L: 'fist', R: 'fist' }, move: 1, ease: 'linear' }],
+      steps: ['휘슬을 분다.', '두 팔뚝을 가슴 앞에서 만든다.', '두 팔뚝을 서로 감아 두세 바퀴 돌리고 멈춘다.'],
+      when: '교체 요청을 받아들였을 때. 교체된 선수는 다시 나오지 못한다(자료 기준).', tip: '돌리는 동작을 끝까지 하고 멈춘다.' },
+    endset: { n: '세트·경기 종료', en: 'End of set or match', flow: 'ws',
+      segs: [{ label: '팔뚝 교차', dur: 1600, keys: [P([112, 112, 160, 104], [188, 112, 140, 104])], hands: { L: 'open', R: 'open' } }],
+      steps: ['휘슬을 분다.', '두 팔뚝을 가슴 앞에서 교차한다.', '손은 펴서 잠깐 멈춘다.'],
+      when: '세트나 경기가 끝났을 때.', tip: '손바닥을 펴서 교차한 모양이 보이게 한다.' },
+    change: { n: '코트 교체', en: 'Change of courts', flow: 'ws',
+      segs: [{ label: '두 손 번갈아 움직이기', dur: 2300, keys: [P([112, 118, 136, 96], [188, 118, 164, 122]), P([112, 118, 136, 122], [188, 118, 164, 96]), P([112, 118, 136, 96], [188, 118, 164, 122]), P([112, 118, 136, 122], [188, 118, 164, 96])], hands: { L: 'open', R: 'open' }, move: 1 }],
+      steps: ['휘슬을 분다.', '두 손을 가슴 앞에 둔다.', '두 손을 서로 위아래로 번갈아 움직여 팀이 자리를 바꾸게 한다.'],
+      when: '세트가 끝나 두 팀이 코트를 바꿀 때.', tip: '공식 신호는 팔뚝을 앞뒤로 번갈아 움직이는 동작이다. 수업에서 쓰는지 확인한다.' },
+    yellow: { n: '경고 (노란 카드)', en: 'Misconduct warning', flow: 'x',
+      segs: [{ label: '노란 카드', dur: 1600, keys: [P(null, A.fingers)], hands: { R: 'card:y' } }],
+      steps: ['휘슬을 불어 경기를 멈춘다.', '노란 카드를 한 손에 들고 머리 옆으로 올린다.', '선수가 보게 하고 잠깐 멈춘다. 점수는 바뀌지 않는다.'],
+      when: '부적절한 행동에 대한 경고일 때.', tip: '카드는 반칙한 선수를 향해 보여 준다.' },
+    red: { n: '페널티 (빨간 카드)', en: 'Misconduct penalty', flow: 'cp',
+      segs: [{ label: '빨간 카드', dur: 1600, keys: [P(null, A.fingers)], hands: { R: 'card:r' } }],
+      steps: ['휘슬을 불어 경기를 멈춘다.', '빨간 카드를 한 손에 들고 머리 옆으로 올린다.', '상대 팀에 1점과 서브권을 주고, 그 팀 쪽을 가리킨다.'],
+      when: '무례한 행동이 있었을 때(공식 기준).', tip: '빨간 카드는 상대 팀에게 점수와 서브권이 간다.' },
+    expel: { n: '퇴장', en: 'Expulsion', flow: 'x',
+      segs: [{ label: '두 카드를 한 손에', dur: 1600, keys: [P(null, A.fingers)], hands: { R: 'card:yr' } }],
+      steps: ['휘슬을 불어 경기를 멈춘다.', '노란 카드와 빨간 카드를 한 손에 함께 든다.', '머리 옆으로 올려 잠깐 멈춘다.'],
+      when: '첫 공격적 행동이나 두 번째 무례한 행동이 있었을 때(공식 기준). 그 세트 동안 코트를 떠난다.', tip: '두 카드가 한 손에 겹쳐 보이게 든다.' },
+    disq: { n: '실격', en: 'Disqualification', flow: 'x',
+      segs: [{ label: '두 카드를 따로', dur: 1600, keys: [P(m(A.up), A.up)], hands: { L: 'card:r', R: 'card:y' } }],
+      steps: ['휘슬을 불어 경기를 멈춘다.', '빨간 카드와 노란 카드를 양손에 하나씩 따로 든다.', '두 팔을 머리 옆으로 올려 잠깐 멈춘다.'],
+      when: '신체적 공격이나 위협 등이 있었을 때(공식 기준). 경기가 끝날 때까지 코트를 떠난다.', tip: '퇴장과 달리 카드를 양손에 나눠 든다.' }
+  };
+
+  function compose(sig, full) {
+    var arr = [];
+    if (full && (sig.flow === 'fault' || sig.flow === 'ws')) { arr.push(WHISTLE); }
+    arr = arr.concat(sig.segs);
+    if (full && (sig.flow === 'fault' || sig.flow === 'cp')) { arr.push(POINTSEG); }
+    arr.push(RESTSEG);
+    return arr;
+  }
+
+  /* ---------- hand drawing ---------- */
+  function f1(x) { return x.toFixed(1); }
+  function handSvg(style, a) {
+    var ex = a[0], ey = a[1], wx = a[2], wy = a[3];
+    var dx = wx - ex, dy = wy - ey, len = Math.sqrt(dx * dx + dy * dy) || 1; dx /= len; dy /= len;
+    if (!style) { return '<circle class="hrest" cx="' + f1(wx) + '" cy="' + f1(wy) + '" r="6"/>'; }
+    if (style === 'open') {
+      return '<line class="hl" x1="' + f1(wx) + '" y1="' + f1(wy) + '" x2="' + f1(wx + dx * 20) + '" y2="' + f1(wy + dy * 20) + '" stroke-width="10"/>';
+    }
+    if (style === 'point') {
+      return '<line class="hl" x1="' + f1(wx) + '" y1="' + f1(wy) + '" x2="' + f1(wx + dx * 20) + '" y2="' + f1(wy + dy * 20) + '" stroke-width="4"/>' +
+        '<circle class="hf" cx="' + f1(wx) + '" cy="' + f1(wy) + '" r="6"/>';
+    }
+    if (style === 'fist') {
+      return '<circle class="hf" cx="' + f1(wx + dx * 5) + '" cy="' + f1(wy + dy * 5) + '" r="8"/>';
+    }
+    if (style === 'thumb') {
+      var tx = wx + dx * 5, ty = wy + dy * 5;
+      return '<circle class="hf" cx="' + f1(tx) + '" cy="' + f1(ty) + '" r="8"/>' +
+        '<line class="hl" x1="' + f1(tx) + '" y1="' + f1(ty) + '" x2="' + f1(tx) + '" y2="' + f1(ty - 16) + '" stroke-width="5"/>';
+    }
+    if (typeof style === 'number') {
+      var s = '<circle class="hf" cx="' + f1(wx) + '" cy="' + f1(wy) + '" r="7"/>';
+      for (var i = 0; i < style; i++) {
+        var ang = (i - (style - 1) / 2) * 0.3, c = Math.cos(ang), sn = Math.sin(ang);
+        var rx = dx * c - dy * sn, ry = dx * sn + dy * c;
+        s += '<line class="hl" x1="' + f1(wx) + '" y1="' + f1(wy) + '" x2="' + f1(wx + rx * 24) + '" y2="' + f1(wy + ry * 24) + '" stroke-width="4"/>';
+      }
+      return s;
+    }
+    if (typeof style === 'string' && style.indexOf('card:') === 0) {
+      var kinds = style.slice(5), cx = wx + dx * 14, cy = wy + dy * 14;
+      var deg = Math.atan2(dy, dx) * 180 / Math.PI + 90, out = '';
+      function rect(cls, ox, rot) {
+        return '<g transform="translate(' + f1(cx) + ' ' + f1(cy) + ') rotate(' + f1(deg + rot) + ')"><rect class="' + cls + '" x="' + (ox - 8) + '" y="-13" width="16" height="26" rx="2"/></g>';
+      }
+      if (kinds === 'y') { out = rect('cy', 0, 0); }
+      else if (kinds === 'r') { out = rect('cr', 0, 0); }
+      else { out = rect('cr', -5, -8) + rect('cy', 5, 8); }
+      return out + '<circle class="hf" cx="' + f1(wx) + '" cy="' + f1(wy) + '" r="5"/>';
+    }
+    return '';
+  }
+
+  /* ---------- player ---------- */
+  var PLAYERS = [];
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function lerp(a, b, f) { return a + (b - a) * f; }
+  function lerpArm(a, b, f) { return [lerp(a[0], b[0], f), lerp(a[1], b[1], f), lerp(a[2], b[2], f), lerp(a[3], b[3], f)]; }
+  function poseAt(keys, u, linear) {
+    var n = keys.length;
+    if (n === 1) { return keys[0]; }
+    var k = clamp(u, 0, 1) * (n - 1), i = Math.min(Math.floor(k), n - 2), f = k - i;
+    if (!linear) { f = f * f * (3 - 2 * f); }
+    return { L: lerpArm(keys[i].L, keys[i + 1].L, f), R: lerpArm(keys[i].R, keys[i + 1].R, f) };
+  }
+
+  function Player(root, opts) {
+    opts = opts || {};
+    this.opts = opts;
+    this.root = root;
+    root.innerHTML =
+      '<svg class="fig" viewBox="0 -14 300 294" role="img" aria-label="수신호 동작을 보여 주는 심판 그림">' +
+      '<g class="g-net" visibility="hidden"><rect class="netband" x="36" y="112" width="228" height="22" rx="2"/></g>' +
+      '<line class="floor" x1="20" y1="238" x2="280" y2="238"/>' +
+      '<line class="leg" x1="138" y1="150" x2="136" y2="234"/><line class="leg" x1="162" y1="150" x2="164" y2="234"/>' +
+      '<rect class="torso" x="124" y="76" width="52" height="78" rx="12"/>' +
+      '<circle class="skin" cx="150" cy="42" r="17"/>' +
+      '<g class="g-whist" visibility="hidden"><path d="M174 40 q8 6 0 12"/><path d="M182 36 q12 10 0 20"/><text x="198" y="52">삐—</text></g>' +
+      '<polyline class="arm a-L" points=""/><g class="h-L"></g>' +
+      '<polyline class="arm a-R" points=""/><g class="h-R"></g>' +
+      '<text class="cue" x="262" y="60" text-anchor="end" visibility="hidden"></text>' +
+      '</svg>' +
+      (opts.quiz ? '' : '<div class="cap"></div><div class="chips"></div>');
+    this.q = function (s) { return root.querySelector(s); };
+    this.aL = this.q('.a-L'); this.aR = this.q('.a-R'); this.hL = this.q('.h-L'); this.hR = this.q('.h-R');
+    this.gNet = this.q('.g-net'); this.netRect = this.gNet.querySelector('rect');
+    this.gWhist = this.q('.g-whist'); this.cue = this.q('.cue');
+    this.cap = this.q('.cap'); this.chips = this.q('.chips');
+    this.segs = []; this.total = 0; this.t = 0; this.speed = 1; this.running = false; this.raf = 0; this.last = null; this.phase = -1; this.mirror = false;
+    this.slide = opts.slide || null;
+    PLAYERS.push(this);
+    this.setSeq([RESTSEG], false);
+  }
+  Player.prototype.setSeq = function (segs, mirror) {
+    this.mirror = !!mirror;
+    var out = [], last = REST, total = 0, i;
+    for (i = 0; i < segs.length; i++) {
+      var s = segs[i];
+      var keys = s.keys.map(function (k) { return mirror ? mp(k) : k; });
+      var hands = s.hands || {};
+      if (mirror) { hands = { L: hands.R, R: hands.L }; }
+      out.push({ label: s.label, dur: s.dur, keys: [last].concat(keys), hands: hands, net: s.net, whistle: s.whistle, cue: s.cue, move: s.move || 0.7, linear: s.ease === 'linear' });
+      last = keys[keys.length - 1];
+      total += s.dur;
+    }
+    this.segs = out; this.total = total; this.t = 0; this.phase = -1;
+    if (this.chips) {
+      this.chips.innerHTML = out.filter(function (s) { return s.label; }).map(function (s, j) { return '<span data-i="' + j + '">' + esc(s.label) + '</span>'; }).join('');
+    }
+    this.draw();
+  };
+  Player.prototype.draw = function () {
+    var t = this.t, acc = 0, idx = 0, seg = this.segs[0], i;
+    for (i = 0; i < this.segs.length; i++) {
+      if (t < acc + this.segs[i].dur || i === this.segs.length - 1) { idx = i; seg = this.segs[i]; break; }
+      acc += this.segs[i].dur;
+    }
+    var u = clamp((t - acc) / (seg.dur * seg.move), 0, 1);
+    var pose = poseAt(seg.keys, u, seg.linear);
+    this.aL.setAttribute('points', SH.L[0] + ',' + SH.L[1] + ' ' + f1(pose.L[0]) + ',' + f1(pose.L[1]) + ' ' + f1(pose.L[2]) + ',' + f1(pose.L[3]));
+    this.aR.setAttribute('points', SH.R[0] + ',' + SH.R[1] + ' ' + f1(pose.R[0]) + ',' + f1(pose.R[1]) + ' ' + f1(pose.R[2]) + ',' + f1(pose.R[3]));
+    this.hL.innerHTML = handSvg(seg.hands.L, pose.L);
+    this.hR.innerHTML = handSvg(seg.hands.R, pose.R);
+    if (seg.net) { this.gNet.setAttribute('visibility', 'visible'); this.netRect.setAttribute('y', seg.net); } else { this.gNet.setAttribute('visibility', 'hidden'); }
+    this.gWhist.setAttribute('visibility', seg.whistle ? 'visible' : 'hidden');
+    if (seg.cue) {
+      this.cue.textContent = seg.cue;
+      this.cue.setAttribute('x', this.mirror ? 38 : 262);
+      this.cue.setAttribute('text-anchor', this.mirror ? 'start' : 'end');
+      this.cue.setAttribute('visibility', 'visible');
+    } else { this.cue.setAttribute('visibility', 'hidden'); }
+    if (idx !== this.phase) {
+      this.phase = idx;
+      if (this.cap) { this.cap.textContent = seg.label || ''; }
+      if (this.chips) {
+        var lab = -1, c;
+        for (c = 0; c <= idx; c++) { if (this.segs[c].label) { lab += 1; } }
+        if (!seg.label) { lab = -1; }
+        Array.prototype.forEach.call(this.chips.children, function (el, j) { el.classList.toggle('on', j === lab); });
+      }
+    }
+  };
+  Player.prototype.tick = function (ts) {
+    if (!this.running) { return; }
+    var self = this;
+    if (this.last === null) { this.last = ts; }
+    var dt = ts - this.last; this.last = ts; if (dt > 100) { dt = 100; }
+    this.t += dt * this.speed;
+    if (this.t >= this.total) { this.t = 0; }
+    this.draw();
+    this.raf = requestAnimationFrame(function (x) { self.tick(x); });
+  };
+  Player.prototype.start = function () {
+    if (this.running) { return; }
+    if (REDUCED && !this.forced) { this.showStill(); return; }
+    var self = this;
+    this.running = true; this.last = null;
+    this.raf = requestAnimationFrame(function (x) { self.tick(x); });
+  };
+  Player.prototype.stop = function () { this.running = false; if (this.raf) { cancelAnimationFrame(this.raf); } };
+  Player.prototype.replay = function () { this.forced = true; this.t = 0; this.phase = -1; this.running = false; this.start(); };
+  Player.prototype.showStill = function () {
+    var acc = 0, tt = 0, i;
+    for (i = 0; i < this.segs.length; i++) { if (this.segs[i].label) { tt = acc + this.segs[i].dur * this.segs[i].move; } acc += this.segs[i].dur; }
+    this.t = tt; this.phase = -1; this.draw();
+  };
+
+  function ctrlBar(player, extra) {
+    var bar = document.createElement('div'); bar.className = 'ctrl';
+    function btn(text, fn, pressed) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'sm'; b.textContent = text;
+      if (pressed !== undefined) { b.setAttribute('aria-pressed', 'false'); }
+      b.addEventListener('click', function () { fn(b); }); bar.appendChild(b); return b;
+    }
+    btn('다시 보기', function () { player.replay(); });
+    btn('느리게', function (b) { var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on ? 'true' : 'false'); player.speed = on ? 0.5 : 1; }, false);
+    if (extra) { extra.forEach(function (e) { btn(e.text, e.fn, e.toggle ? false : undefined); }); }
+    return bar;
+  }
+
+  /* ---------- sections: demo + labs ---------- */
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+
+  slides.forEach(function (s) {
+    var demo = s.getAttribute('data-demo');
+    if (demo) {
+      var left = s.querySelector('.demo-left');
+      var box = document.createElement('div'); box.className = 'player';
+      left.appendChild(box);
+      var p = new Player(box, { slide: s });
+      var st = { mirror: false, full: true };
+      function refresh() { p.setSeq(compose(SIG[demo], st.full), st.mirror); p.replay(); }
+      box.appendChild(ctrlBar(p, [
+        { text: '좌우 바꾸기', fn: function () { st.mirror = !st.mirror; refresh(); } }
+      ]));
+      p.setSeq(compose(SIG[demo], true), false);
+    }
+    var keys = s.getAttribute('data-labsigs');
+    if (keys) {
+      var lab = s.querySelector('.lab');
+      lab.innerHTML = '<div class="lab-left"></div><div class="lab-right"><div class="tabs"></div><div class="detail"></div></div>';
+      var pb = document.createElement('div'); pb.className = 'player';
+      lab.querySelector('.lab-left').appendChild(pb);
+      var pl = new Player(pb, { slide: s });
+      var state = { key: null, mirror: false, full: false };
+      var tabs = lab.querySelector('.tabs'), detail = lab.querySelector('.detail');
+      function show(k, noPlay) {
+        state.key = k;
+        Array.prototype.forEach.call(tabs.children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-k') === k ? 'true' : 'false'); });
+        var d = SIG[k];
+        detail.innerHTML = '<h3>' + esc(d.n) + '</h3><div class="en">' + esc(d.en) + '</div><ol>' +
+          d.steps.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ol>' +
+          '<div class="row"><b>언제</b> ' + esc(d.when) + '</div><div class="row tip"><b>주의</b> ' + esc(d.tip) + '</div>';
+        pl.setSeq(compose(d, state.full), state.mirror);
+        if (!noPlay) { pl.replay(); }
+      }
+      keys.split(',').forEach(function (k) {
+        var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-k', k); b.setAttribute('aria-pressed', 'false'); b.textContent = SIG[k].n;
+        b.addEventListener('click', function () { show(k); });
+        tabs.appendChild(b);
+      });
+      pb.appendChild(ctrlBar(pl, [
+        { text: '좌우 바꾸기', fn: function () { state.mirror = !state.mirror; show(state.key); } },
+        { text: '휘슬부터 전체', toggle: true, fn: function (b) { state.full = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', state.full ? 'true' : 'false'); show(state.key); } }
+      ]));
+      show(keys.split(',')[0], true);
+    }
+  });
+
+  /* ---------- situation practice ---------- */
+  var SIT = [
+    { s: '서브한 공이 상대 코트 바닥에 떨어졌다', k: 'in' },
+    { s: '공이 코트 밖 바닥에 떨어졌다', k: 'out' },
+    { s: '수비수 손에 맞은 공이 코트 밖으로 나갔다', k: 'touched' },
+    { s: '선수가 공을 잡았다가 던지듯 밀어냈다', k: 'catch' },
+    { s: '한 선수가 공을 연속으로 두 번 쳤다', k: 'double' },
+    { s: '한 팀이 허용된 터치 횟수보다 많이 쳤다', k: 'overtouch' },
+    { s: '플레이 중에 선수의 몸이 네트에 닿았다', k: 'net' },
+    { s: '상대 공이 넘어오기 전에 손이 네트 위로 넘어가 공을 건드렸다', k: 'over' },
+    { s: '서브 순서가 틀렸다', k: 'rot' },
+    { s: '두 팀이 동시에 반칙을 했다', k: 'dfault' },
+    { s: '공이 멈춘 사이 한 팀이 타임아웃을 요청했다', k: 'timeout' },
+    { s: '선수 교체 요청을 받아들였다', k: 'sub' },
+    { s: '세트가 끝났다', k: 'endset' },
+    { s: '선수가 판정에 부적절하게 반응했다 (경고 수준)', k: 'yellow' },
+    { s: '선수가 무례한 행동을 했다 (페널티 수준)', k: 'red' }
+  ];
+  var sitList = document.getElementById('sit-list'), sitTitle = document.getElementById('sit-title');
+  var sitStage = document.getElementById('sit-stage'), sitAns = document.getElementById('sit-answer');
+  var sitBox = document.getElementById('sit-player');
+  var sitSlide = document.getElementById('sitslide');
+  var sitP = new Player(sitBox, { slide: sitSlide });
+  var sst = { i: 0, mirror: false, hide: false, revealed: true };
+  sitBox.appendChild(ctrlBar(sitP, [{ text: '좌우 바꾸기', fn: function () { sst.mirror = !sst.mirror; showSit(sst.i, true); } }]));
+  function showSit(i, keepVeil) {
+    sst.i = i;
+    var d = SIT[i], sg = SIG[d.k];
+    Array.prototype.forEach.call(sitList.children, function (b, j) { b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    sitTitle.textContent = d.s;
+    if (!keepVeil) { sst.revealed = !sst.hide; }
+    sitStage.classList.toggle('veiled', sst.hide && !sst.revealed);
+    sitAns.innerHTML = '<div class="call">' + esc(sg.n) + '</div><ol>' + sg.steps.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ol>';
+    sitP.setSeq(compose(sg, true), sst.mirror);
+    if (!(sst.hide && !sst.revealed)) { sitP.replay(); }
+  }
+  SIT.forEach(function (d, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.setAttribute('aria-pressed', 'false'); b.textContent = d.s;
+    b.addEventListener('click', function () { showSit(i); });
+    sitList.appendChild(b);
+  });
+  document.getElementById('sit-hide').addEventListener('click', function (e) {
+    sst.hide = !sst.hide; e.currentTarget.setAttribute('aria-pressed', sst.hide ? 'true' : 'false'); showSit(sst.i);
+  });
+  document.getElementById('sit-rand').addEventListener('click', function () {
+    var i = Math.floor(Math.random() * SIT.length);
+    sst.hide = true; document.getElementById('sit-hide').setAttribute('aria-pressed', 'true'); showSit(i);
+  });
+  document.getElementById('sit-reveal').addEventListener('click', function () { sst.revealed = true; showSit(sst.i, true); });
+  showSit(0);
+
+  /* ---------- motion quiz ---------- */
+  var QPOOL = ['serve', 'point', 'in', 'out', 'touched', 'catch', 'double', 'overtouch', 'net', 'over', 'rot', 'block', 'dfault', 'timeout', 'sub', 'endset', 'yellow', 'red', 'expel', 'disq'];
+  var quizSlide = document.getElementById('quizslide'), qb = document.getElementById('quiz-body');
+  var qPlayer = null, qList = [], qi = 0, score = 0, answered = false;
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function newQuiz() { qList = shuffle(QPOOL).slice(0, 6); qi = 0; score = 0; renderQ(); }
+  function renderQ() {
+    if (qPlayer) { var ix = PLAYERS.indexOf(qPlayer); if (ix >= 0) { PLAYERS.splice(ix, 1); } qPlayer.stop(); qPlayer = null; }
+    if (qi >= qList.length) {
+      qb.innerHTML = '<h2>결과</h2><div class="score">' + score + ' / ' + qList.length + '</div><p class="lead">' +
+        (score === qList.length ? '모두 맞혔다. 이제 직접 동작으로 보여 줄 차례이다.' : '틀린 신호는 앞의 신호 장에서 다시 보자.') +
+        '</p><button class="btn" id="retry" type="button">다시 풀기</button>';
+      document.getElementById('retry').addEventListener('click', newQuiz);
+      return;
+    }
+    answered = false;
+    var key = qList[qi], d = SIG[key];
+    var names = shuffle(QPOOL.filter(function (k) { return k !== key && SIG[k].n !== d.n; })).slice(0, 3);
+    var opts = shuffle([key].concat(names));
+    qb.innerHTML = '<div class="q-count">문제 ' + (qi + 1) + ' / ' + qList.length + '</div><div class="q-text">그림의 동작은 어떤 신호일까?</div>' +
+      '<div class="quizgrid"><div class="player" id="qplayer"></div><div><div class="opts" id="qopts"></div><div class="fb" id="fb" aria-live="polite"></div>' +
+      '<p style="margin-top:12px"><button class="btn" id="qnext" type="button" disabled>' + (qi === qList.length - 1 ? '결과 보기' : '다음 문제') + '</button></p></div></div>';
+    var box = document.getElementById('qplayer');
+    qPlayer = new Player(box, { quiz: true, slide: quizSlide });
+    qPlayer.setSeq(compose(d, false), false);
+    box.appendChild(ctrlBar(qPlayer));
+    qPlayer.replay();
+    var ob = document.getElementById('qopts');
+    opts.forEach(function (k) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = SIG[k].n;
+      b.addEventListener('click', function () {
+        if (answered) { return; } answered = true;
+        var ok = k === key; if (ok) { score++; }
+        Array.prototype.forEach.call(ob.children, function (c, j) {
+          c.disabled = true;
+          if (opts[j] === key) { c.classList.add('ok'); } else if (opts[j] === k) { c.classList.add('bad'); }
+        });
+        document.getElementById('fb').innerHTML = (ok ? '정답. ' : '오답. 정답은 ' + esc(d.n) + '이다. ') + esc(d.when);
+        document.getElementById('qnext').disabled = false;
+      });
+      ob.appendChild(b);
+    });
+    document.getElementById('qnext').addEventListener('click', function () { qi++; renderQ(); updateRun(); });
+  }
+  newQuiz();
+
+  /* ---------- checklist ---------- */
+  var CHK = [
+    '휘슬을 불고, 반칙 신호를 보인 뒤, 득점 팀을 가리켰다.',
+    '손가락 수와 손바닥 방향을 정확하게 만들었다.',
+    '팔을 크고 곧게 뻗고, 신호마다 잠깐 멈췄다.',
+    '득점 팀 쪽에 있는 팔로 그 팀을 가리켰다.',
+    '상황을 듣고 알맞은 신호를 바로 골랐다.',
+    '신호 이름을 큰 소리로 말할 수 있다.'
+  ];
+  var chk = document.getElementById('check'), chkSum = document.getElementById('check-sum');
+  CHK.forEach(function (t, i) {
+    var l = document.createElement('label');
+    l.innerHTML = '<input type="checkbox" id="chk' + i + '"><span>' + esc(t) + '</span>';
+    l.querySelector('input').addEventListener('change', function () {
+      var n = chk.querySelectorAll('input:checked').length;
+      chkSum.textContent = n + ' / ' + CHK.length + ' 확인했다.' + (n === CHK.length ? ' 준비가 됐다.' : '');
+    });
+    chk.appendChild(l);
+  });
+  var drawKey = null;
+  var drawn = document.getElementById('drawn'), drawShow = document.getElementById('draw-show'), drawSteps = document.getElementById('draw-steps');
+  document.getElementById('draw-btn').addEventListener('click', function () {
+    drawKey = QPOOL[Math.floor(Math.random() * QPOOL.length)];
+    drawn.textContent = SIG[drawKey].n; drawShow.disabled = false; drawSteps.innerHTML = '';
+  });
+  drawShow.addEventListener('click', function () {
+    if (!drawKey) { return; }
+    drawSteps.innerHTML = SIG[drawKey].steps.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+  });
+
+  /* ---------- navigation ---------- */
+  var cur = 0, buf = '', bufT = null;
+  var prev = document.getElementById('prev'), next = document.getElementById('next');
+  var pg = document.getElementById('pg'), prog = document.getElementById('prog'), stage = document.getElementById('stage');
+  function updateRun() {
+    PLAYERS.forEach(function (p) {
+      if (p.slide === slides[cur]) { p.start(); } else { p.stop(); }
+    });
+  }
+  function go(n, fromHash) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function (s, i) { s.classList.toggle('on', i === n); });
+    cur = n;
+    pg.textContent = (n + 1) + ' / ' + slides.length;
+    prog.style.width = ((n + 1) / slides.length * 100) + '%';
+    prev.disabled = n === 0; next.disabled = n === slides.length - 1;
+    stage.scrollTop = 0;
+    if (!fromHash) { try { history.replaceState(null, '', '#' + (n + 1)); } catch (e) {} }
+    updateRun();
+  }
+  prev.addEventListener('click', function () { go(cur - 1); });
+  next.addEventListener('click', function () { go(cur + 1); });
+  function fs() {
+    try {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch(function () {}); }
+    } catch (e) {}
+  }
+  document.getElementById('fs').addEventListener('click', fs);
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) { return; }
+    var tag = e.target && e.target.tagName;
+    if (tag === 'INPUT') { return; }
+    if (e.key === 'ArrowRight' || (e.key === ' ' && tag !== 'BUTTON' && tag !== 'A')) { e.preventDefault(); go(cur + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'f' || e.key === 'F') { fs(); }
+    else if (/^[0-9]$/.test(e.key)) { buf += e.key; clearTimeout(bufT); bufT = setTimeout(function () { buf = ''; }, 2000); }
+    else if (e.key === 'Enter' && buf && tag !== 'BUTTON') { go(parseInt(buf, 10) - 1); buf = ''; }
+  });
+  var sx = 0, sy = 0;
+  stage.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  stage.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 70 && Math.abs(dy) < 45) { go(cur + (dx < 0 ? 1 : -1)); }
+  }, { passive: true });
+  function fromHash() {
+    var mm = /^#(\d+)$/.exec(location.hash || '');
+    go(mm ? parseInt(mm[1], 10) - 1 : 0, true);
+  }
+  window.addEventListener('hashchange', fromHash);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { PLAYERS.forEach(function (p) { p.stop(); }); } else { updateRun(); } });
+  fromHash();
+})();
+</script>
+
+</body></html>
